@@ -74,8 +74,7 @@ It is important for us to be precise when labeling a customer as a churn. Becaus
 The outputs are generated using medium sized dataset. This might have introduced a slight imbalance in the data.
 It is also challenging to understand latent relations in the data.Feature selection is really important otherwise you might end up with a model with accuracy 1.0 but it is not true.
 Moreover as a further work a common practice, A/B test can be considered.A set of actions can be determined to reduce churn and population can be split into control and experiment groups to validate the model and results.
-More details can be found on Medium Blog Post: https://medium.com/@elifsurmelif/sparkify-user-churn-prediction-eff0868c5554
-
+More details can be found on Medium Blog Post: https://medium.com/@lendale.vijaylaxmi/sparkify-big-data-udacity-capstone-project-d45966d830fc
 
 ## Licensing, Authors, Acknowledgements<a name="licensing"></a>
 
