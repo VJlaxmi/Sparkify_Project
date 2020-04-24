@@ -1,55 +1,100 @@
 # Sparkify_Project
 
-Determine customer churn for a music streaming company called Sparkify.
+Udacity Data Scientist Nanodegree Capstone Project
+ 
+Sparkify is a fictional music streaming platform created by Udacity. 
+For this project we are given log data of this platform in order to drive insights and create a machine learning pipeline to predict churn. 
 
-### Table of Contents
+mini, medium and large datasets(only on AWS public) are available.
+I have used medium scale data that I have processed with Spark on AWS EMR.
 
-1. [Installation](#installation)
-2. [Project Motivation](#motivation)
-3. [File Descriptions](#files)
-4. [Results](#results)
-5. [Licensing, Authors, and Acknowledgements](#licensing)
+**Medium** : https://medium.com/@elifsurmelif/sparkify-user-churn-prediction-eff0868c5554
 
-## Installation <a name="installation"></a>
-This project uses the following software and python libraries
+## Getting Started
 
-- [Python 3.6](https://www.python.org/download/releases/2.7/)
-- [NumPy](http://www.numpy.org/)
-- [Pandas](http://pandas.pydata.org/)
-- [scikit-learn](http://scikit-learn.org/stable/)
-- [matplotlib](http://matplotlib.org/)
-- [Pyspark-2.4.1](https://spark.apache.org/docs/latest/api/python/index.html)
+Instructions below will help you setup your local machine to run the copy of this project.
+You can run the notebook in local mode on a local computer as well as on a cluster of a cloud provider such as AWS or IBM Cloud.
 
-You will also need to have software installed to run and execute a [Jupyter Notebook](http://ipython.org/notebook.html)
+### Prerequisites
+
+#### Software and Data Requirements
+
+  - Anaconda 3
+  - Python 3.7.3
   
+  - pyspark 2.4
+  - pyspark.ml
+  - pandas
 
-## Project Motivation<a name="motivation"></a>
-Imagine you are working for music streaming company like Spotify or Pandora called Sparkify.Millions of users stream thier favorite songs everyday. Each user  uses either the Free-tier with advertisement between the songs or the premium Subscription Plan.Users can upgrade, downgrade or cancel thier service at any time.Hence, it's crucial to make sure that users love the service provided by Sparkify. Every time a users interacts with the Sparkify app data is generated. Events such as playing a song, logging out, like a song etc. are all recorded. All this data contains key insights that can help the business thrive. The goal of this project is then to analyse this data and predict which group of users are expected to churn - either downgrading from premium to free or cancel thier subscriptions altogether.
+Dataset:
+  - mini_sparkify_event_data.json is the app data that you can play with. 
+  - medium-sparkify-event-data.json.gz : this dataset is larger than github limits, it's gzipped.
+  - If you have an AWS account, a large dataset(12 GB) has been public on s3n://udacity-dsnd/sparkify/sparkify_event_data.json
 
-In this project we'll be performing the following tasks:
-1. Data Exploration
-    - Learn about the data
-2. Define Churn and label data based on churn definition
-    - Determine which feature or feature value can be user to defin churn
-3. Feature Engineering
-    - Create features for each user. This data will be used as input to the model
-4. Data transformation, data splitting and model training
-    - Transform feature engineered data. 
-    - Split data into training, validation and test data.
-    - Build a machine learning model to train using training data
+#### Running the notebooks
 
-## File Descriptions <a name="files"></a>
-* Sparkify-Capstone-Project : Jputer notebook used for this project
-* main_sparkify.py: python script extracted from the notebook
+  - First install all the packages stated above.
+  - Run the commands below in your working directory to open the project in jupyter lab:
+    ```
+    git clone https://github.com/elifinspace/sparkify.git
+    
+    jupyter lab
+   
+    ```
+  - sparkify_final_.ipynb : This notebook has all the functions for processing the data and ml pipeline.
+  - sparkify_exploration_visuals.ipynb: This notebook has some sample visuals that have been generated during initial investigation. More detailed analysis could have been done to reveal relations and gain insights.
+  
+  If you have difficulty in displaying .ipynb files please go to  https://nbviewer.jupyter.org/ and paste the link that you're trying to display the notebook.
+  And you can use http://htmlpreview.github.io/ to display html files.
+# Steps
+Details for the following steps are in sparkify_exploration_visuals.ipynb:
+## Data Exploration 
+We have 2 months of data for 449 customers.
+Data has nulls in general when a particular event occurs "Log out".
+Data is imbalanced. We have 99 churn in 449 customers.
+Stats based on gender. level(free/paid) can be found in the notebook mentioned.
 
-## Results<a name="results"></a>
-We have analysed the sparkify dataset and come up with new features to predict churn. We then created a machine learning model and tuned it to improve its performance. We achieved an accuracy score of - and F1 score of - on the test dataset. 
+Churn Non-Churn Counts per State:
 
-# Conclusion
-We are able to achieve an accuracy score of 87% and F1 score of 84% on the test dataset using the tuned Random Forest algorithm. The model peformance can be further improved by creating additional features and includiding some of the features that I have left out for this analysis. The model should also be tested using samples from the left out big dataset which hasn't been used for this analysis. Once we are satified with the result, a large scale of the model can be implemented on the cloud.
+![alt text](https://github.com/elifinspace/sparkify/blob/master/state_churn.png?raw=true "Churn Non-Churn Counts per State")
 
-## Licensing, Authors, Acknowledgements<a name="licensing"></a>
+## Preprocessing
+Null user id's, log out records are removed.
+Timestamp column is used to generate month, date and timestamp columns for further work.
 
-Credit to [Udacity](https://www.udacity.com/courses/all) for creating a happy learning experience.
+Null counts in data:
+![alt text](https://github.com/elifinspace/sparkify/blob/master/null_in_raw.png?raw=true)
 
-[Click here to read the post on Medium](https://medium.com/@akessela/predict-customer-churn-for-sparkify-945d373b5f3)
+Days since registration versus label count
+![alt text](https://github.com/elifinspace/sparkify/blob/master/registered_customers.png?raw=true)
+
+You can find details for the following steps in sparkify_final_.ipynb :
+## Feature Generation
+Aggregates on itemInSession, sessionId, page, length, time since registration are generated.
+gender, level and location are left as categorical fields.
+
+Features DataFrame a snapshot:
+![alt text](https://github.com/elifinspace/sparkify/blob/master/feature_Df.png?raw=true)
+
+Features Distribution:
+![alt text](https://github.com/elifinspace/sparkify/blob/master/features.png?raw=true)
+## Postprocessing
+pyspark.ml stringIndexer (creates indexes for categorical variables), VectorAssembler (merges numerical features into a vector) and pipeline is used.
+## Modelling and Metrics 
+
+I have used f1score and AUC when evaluating the models.
+Logistic Regression, Random Forest Classifier and Gradient Boosting Classifier are experimented.
+Random Forest Classifier is chosen as it performed the best and it is not effected by imbalance in the data.
+
+It is important for us to be precise when labeling a customer as a churn. Because if we're giving away free products, we might be causing unnecessary cost if the user is not thinking of churn .or if we're sending messages regarding their reduced activity, this might get the user confused.
+
+## Analysis and Discussion
+
+The outputs are generated using medium sized dataset. This might have introduced a slight imbalance in the data.
+It is also challenging to understand latent relations in the data.Feature selection is really important otherwise you might end up with a model with accuracy 1.0 but it is not true.
+Moreover as a further work a common practice, A/B test can be considered.A set of actions can be determined to reduce churn and population can be split into control and experiment groups to validate the model and results.
+More details can be found on Medium Blog Post: https://medium.com/@elifsurmelif/sparkify-user-churn-prediction-eff0868c5554
+
+## Authors
+
+* **Elif Surmeli**
